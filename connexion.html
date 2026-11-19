@@ -1,0 +1,155 @@
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Boutique Plus - Connexion</title>
+
+    <!-- Police Roboto -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="connexion.css">
+</head>
+
+<body>
+<!-- Zone des notifications -->
+<div id="notification" class="notification">
+    <div class="notification-icon" id="notificationIcon">🎉</div>
+
+    <div class="notification-content">
+        <strong id="notificationTitle">Bravo !</strong>
+        <p id="notificationMessage">
+            Votre compte a été créé avec succès.
+        </p>
+    </div>
+
+    <button class="close-notification"
+        onclick="closeNotification()">×</button>
+
+    <div class="notification-progress"></div>
+</div>
+<div class="container">
+
+    <div class="login-box">
+
+        <!-- Logo -->
+        <div class="logo">
+            🛒
+            <h1>Boutique Plus</h1>
+            <p>Gestion Commerciale</p>
+        </div>
+
+        <!-- Boutons de navigation -->
+        <div class="tabs">
+            <button class="tab active" id="loginTab"
+                onclick="showLogin()">
+                Connexion
+            </button>
+
+            <button class="tab" id="registerTab"
+                onclick="showRegister()">
+                Créer un compte
+            </button>
+        </div>
+
+        <!-- FORMULAIRE CONNEXION -->
+        <form id="loginForm" class="form">
+
+            <h2>Bienvenue !</h2>
+            <p class="subtitle">Connectez-vous à votre espace</p>
+
+            <div class="form-group">
+                <label>Nom utilisateur</label>
+                <input type="text"
+                    name="username"
+                    placeholder="Votre nom utilisateur"
+                    required>
+            </div>
+
+            <div class="form-group">
+                <label>Mot de passe</label>
+                <input type="password"
+                    name="password"
+                    placeholder="Votre mot de passe"
+                    required>
+            </div>
+
+            <button type="submit" class="submit-btn">
+                Se connecter
+            </button>
+
+        </form>
+
+        <!-- FORMULAIRE INSCRIPTION -->
+        <form id="registerForm" class="form hidden">
+
+            <h2>Créer un compte</h2>
+            <p class="subtitle">Remplissez les informations ci-dessous</p>
+
+            <div class="form-group">
+                <label>Nom</label>
+                <input type="text"
+                    name="nom"
+                    placeholder="Votre nom"
+                    required>
+            </div>
+
+            <div class="form-group">
+                <label>Prénom</label>
+                <input type="text"
+                    name="prenom"
+                    placeholder="Votre prénom"
+                    required>
+            </div>
+
+            <div class="form-group">
+                <label>Nom utilisateur</label>
+                <input type="text"
+                    name="username"
+                    placeholder="Choisissez un nom utilisateur"
+                    required>
+            </div>
+
+            <div class="form-group">
+                <label>Mot de passe</label>
+                <input type="password"
+                    id="password"
+                    name="password"
+                    placeholder="Créer un mot de passe"
+                    minlength="8"
+                    required>
+            </div>
+
+            <div class="form-group">
+                <label>Confirmer le mot de passe</label>
+                <input type="password"
+                    id="confirmPassword"
+                    name="confirm_password"
+                    placeholder="Confirmer votre mot de passe"
+                    minlength="8"
+                    required>
+            </div>
+
+            <button type="submit" class="submit-btn">
+                Créer mon compte
+            </button>
+
+        </form>
+
+        <p class="footer">
+            © 2026 Boutique Plus - Gestion Commerciale
+        </p>
+
+    </div>
+
+</div>
+
+<script src="connexion.js"></script>
+
+</body>
+</html>
