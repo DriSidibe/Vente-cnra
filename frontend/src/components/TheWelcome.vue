@@ -5,11 +5,13 @@ import ToolingIcon from './icons/IconTooling.vue'
 import EcosystemIcon from './icons/IconEcosystem.vue'
 import CommunityIcon from './icons/IconCommunity.vue'
 import SupportIcon from './icons/IconSupport.vue'
+import TesteCnra from './TesteCnra.vue'
 
 const openReadmeInEditor = () => fetch('/__open-in-editor?file=README.md')
 </script>
 
 <template>
+  <TesteCnra msg="Bienvenue sur votre projet Vue!" />
   <WelcomeItem>
     <template #icon>
       <DocumentationIcon />
