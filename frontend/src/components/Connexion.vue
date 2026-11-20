@@ -2,7 +2,21 @@
 
 import { ref } from 'vue';
 
+interface Notif {
+    icon: string;
+    titre: string;
+    message: string;
+}
+
+
+let notif = ref<Notif>({
+    icon: "",
+    titre: "Connexion réussie",
+    message : "Vous êtes maintenant connecté à votre compte.",
+});
 let showLoginForm = ref(true);
+let showNotif= ref(false);
+
 
 function showLogin() {
     showLoginForm.value = true;
@@ -10,6 +24,8 @@ function showLogin() {
 
 function showRegister() {
     showLoginForm.value = false;
+    showNotification("signup", "Inscription réussie", "Votre compte a été créé avec succès.");
+    showNotif.value = true;
 }
 
 function closeNotification() {
@@ -19,17 +35,41 @@ function closeNotification() {
     }
 }
 
+function showNotification(type:string, title:string, message:string) {
+        if(type="login") {
+            notif.value.icon = "✔️";
+            notif.value.titre = title;
+            notif.value.message = message;
+            showNotif.value = true;
+        }
+        if(type="signup") {
+            notif.value.icon = "📝";
+            notif.value.titre = title;
+            notif.value.message = message;
+            showNotif.value = true;
+        }
+}
+
+function login() {
+    showNotification("login", "Connexion réussie", "Vous êtes maintenant connecté à votre compte.");
+    showNotif.value = true;
+}
+
+function signup() {
+    showNotification("signup", "Inscription réussie", "Votre compte a été créé avec succès.");
+    showNotif.value = true;
+}
 </script>
 
 <template>
     <!-- Zone des notifications -->
-    <div id="notification" class="notification">
-        <div class="notification-icon" id="notificationIcon">🎉</div>
+    <div v-if="showNotif" class="" style="position: fixed; top: 20px; right: 20px; z-index: 9999;" id="notification">
+        <div class="" id="">{{ notif.icon }}</div>
 
-        <div class="notification-content">
-            <strong id="notificationTitle">Bravo !</strong>
-            <p id="notificationMessage">
-                Votre compte a été créé avec succès.
+        <div class="">
+            <strong id="">{{ notif.titre }}</strong>
+            <p id="">
+                {{ notif.message }}
             </p>
         </div>
 
@@ -84,7 +124,7 @@ function closeNotification() {
                         required>
                 </div>
 
-                <button type="submit" class="submit-btn">
+                <button type="button" class="submit-btn" @click="login">
                     Se connecter
                 </button>
 
@@ -140,7 +180,7 @@ function closeNotification() {
                         required>
                 </div>
 
-                <button type="submit" class="submit-btn">
+                <button type="button" class="submit-btn" @click="signup()">
                     Créer mon compte
                 </button>
 
