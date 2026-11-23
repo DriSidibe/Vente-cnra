@@ -1,7 +1,7 @@
 <script setup lang="ts">
 
 import { onMounted, ref } from 'vue';
-import {apiRequest, ApiOptions} from '../utils/scripts/api';
+import { apiGet } from '../utils/scripts/api';
 
 interface Notif {
     icon: string;
@@ -17,17 +17,11 @@ let notif = ref<Notif>({
 });
 let showLoginForm = ref(true);
 let showNotif= ref(false);
-let testApi = ref({
+let testApi = ref({});
 
-});
-
-onMounted(() => {
-    const apiOptions:Options = {
-  method: "POST",
-  headers: new Map<string, string>().set("Content-Type", "application/json"),
-  body: { nom: "Koffi", age: 30 }, // n'importe quelle valeur, grâce à unknown
-};
-    testApi.value = apiRequest("GET", new URL("http://localhost:8000/test/"), apiOptions);
+onMounted(async () => {
+    testApi.value = await apiGet("/test/");
+    console.log(testApi.value);
 });
 
 function showLogin() {
