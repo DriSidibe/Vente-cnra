@@ -1,8 +1,10 @@
 from django.urls import path
-
-from main.views import vente_home
+from . import views
 
 
 urlpatterns = [
-    path('connexion/', vente_home),
+    path('connexion/', views.connexion, name='connexion'),
+    path('deconnexion/', views.deconnexion, name='deconnexion'),
+    path('dashbord/', views.dashbord, name='dashbord'),
+    path('test/', views.test, name='test'),
 ]
