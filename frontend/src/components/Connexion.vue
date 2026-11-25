@@ -20,7 +20,7 @@ let showNotif= ref(false);
 let testApi = ref({});
 
 onMounted(async () => {
-    testApi.value = await apiGet("/test/");
+    testApi.value = await apiGet("/users/");
     console.log(testApi.value);
 });
 
