@@ -1,12 +1,7 @@
 <script setup lang="ts">
-import AppliVente from './components/AppliVente.vue'
-import Connexion from './components/Connexion.vue'
+import { RouterView } from 'vue-router'
 </script>
 
 <template>
-  <Connexion />
+  <RouterView />
 </template>
-
-<style scoped>
-
-</style>

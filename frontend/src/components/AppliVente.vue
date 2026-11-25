@@ -1,9 +1,35 @@
 <script setup lang="ts">
+import { computed } from 'vue'
+import { RouterLink, RouterView, useRouter } from 'vue-router'
+import { deconnecter, utilisateur } from '@/utils/scripts/auth'
 
-import StatisticsCharts from './subcomponents/statistics-charts.vue'
+const router = useRouter()
 
-function decrement() {
-    alert("Vous avez cliqué sur le chiffre d'affaires !");
+const liens = [
+    { route: 'tableau-de-bord', icone: '🏠', texte: 'Tableau de bord' },
+    { route: 'ventes', icone: '🛒', texte: 'Ventes' },
+    { route: 'produits', icone: '📦', texte: 'Produits' },
+    { route: 'categories', icone: '🌐', texte: 'Catégories' },
+    { route: 'clients', icone: '👥', texte: 'Clients' },
+    { route: 'stock', icone: '📊', texte: 'Stock' },
+    { route: 'rapports', icone: '📑', texte: 'Rapports' },
+    { route: 'utilisateurs', icone: '👤', texte: 'Utilisateurs' },
+    { route: 'parametres', icone: '⚙️', texte: 'Paramètres' },
+]
+
+const nomAffiche = computed(() => {
+    const u = utilisateur.value
+    if (!u) return ''
+    return `${u.first_name} ${u.last_name}`.trim() || u.username
+})
+
+async function seDeconnecter() {
+    try {
+        await deconnecter()
+    } catch (erreur) {
+        console.error('Erreur lors de la déconnexion :', erreur)
+    }
+    router.push({ name: 'connexion' })
 }
 </script>
 
@@ -18,16 +44,9 @@ function decrement() {
         </div>
 
         <nav>
-            <a class="active">🏠 Tableau de bord</a>
-            <a>🛒 Ventes</a>
-            <a>📦 Produits</a>
-            <a>🌐 Catégories</a>
-            <a>👥 Clients</a>
-            <a>📊 Stock</a>
-            <a>📑 Rapports</a>
-            <a>👤 Utilisateurs</a>
-            <a>⚙️ Paramètres</a>
-            <a class="logout">⏻ Déconnexion</a>
+            <RouterLink v-for="lien in liens" :key="lien.route" :to="{ name: lien.route }"
+                exact-active-class="active">{{ lien.icone }} {{ lien.texte }}</RouterLink>
+            <a class="logout" href="#" @click.prevent="seDeconnecter">⏻ Déconnexion</a>
         </nav>
 
         
@@ -40,66 +59,12 @@ function decrement() {
             <span class="menu">☰</span>
             <div class="user-actions">
             <span class="notification">🔔</span>
-            <span class="admin">Administrateur ▼</span>
+            <span class="admin">{{ nomAffiche }} ▼</span>
             </div>
             
         </header>
 
-        <section class="content">
-
-            <div class="heading">
-                <div>
-                    <h1>Tableau de bord</h1>
-                    <p>Vue d'ensemble de votre activité commerciale</p>
-                </div>
-                <button>📅 Ce mois-ci</button>
-            </div>
-
-            <!-- Statistiques -->
-            <div class="stats">
-                <StatisticsCharts chiffreAffaires="1250000" message="Chiffre d'affaires" color="blue" />
-                <StatisticsCharts chiffreAffaires="125" message="Ventes réalisées" color="green" />
-                <StatisticsCharts chiffreAffaires="320" message="Produits en stock" color="orange" />
-                <StatisticsCharts chiffreAffaires="48" message="Clients enregistrés" color="purple" />
-            </div>
-
-            <!-- Zones de gestion -->
-            <div class="panels">
-                <section class="panel">
-                    <h2>🛒 Nouvelle vente</h2>
-                    <p>Enregistrement d'une nouvelle transaction</p>
-                    <div class="placeholder">
-                        Espace de gestion des ventes
-                    </div>
-                </section>
-
-                <section class="panel">
-                    <h2>◷ Ventes récentes</h2>
-                    <div class="placeholder">
-                        Historique des ventes
-                    </div>
-                </section>
-            </div>
-
-            <!-- Bas du tableau -->
-            <div class="bottom-panels">
-                <section class="panel">
-                    <h3>Évolution des ventes</h3>
-                    <div class="placeholder">Graphique des ventes</div>
-                </section>
-
-                <section class="panel">
-                    <h3>Stock faible</h3>
-                    <div class="placeholder">Alertes de stock</div>
-                </section>
-
-                <section class="panel">
-                    <h3>Répartition des ventes</h3>
-                    <div class="placeholder">Statistiques</div>
-                </section>
-            </div>
-
-        </section>
+        <RouterView />
     </main>
 </div>
 </template>
@@ -114,13 +79,10 @@ function decrement() {
     font-family: 'roboto', sans-serif;
 }
 
-body {
-    background: #edf1f8;
-    color: #172033;
-}
-
 /* Structure générale */
 .dashboard {
+    background: #edf1f8;
+    color: #172033;
     display: flex;
     min-height: 100vh;
 }
@@ -236,102 +198,7 @@ body {
     cursor: pointer;
 }
 
-/* Contenu */
-.content {
-    padding: 25px;
-}
-
-.heading {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 25px;
-}
-
-.heading h1 {
-    font-size: 30px;
-}
-
-.heading p {
-    color: #71809b;
-    margin-top: 5px;
-}
-
-button {
-    padding: 12px 18px;
-    border: 1px solid #d5deeb;
-    background: white;
-    border-radius: 8px;
-    cursor: pointer;
-}
-
-/* Cartes statistiques */
-.stats {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 18px;
-    margin-bottom: 25px;
-}
-
-
-
-
-
-/* Panneaux */
-.panels {
-    display: grid;
-    grid-template-columns: 1.5fr 1fr;
-    gap: 18px;
-    margin-bottom: 20px;
-}
-
-.bottom-panels {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 18px;
-}
-
-.panel {
-    background: rgba(255,255,255,.78);
-    backdrop-filter: blur(15px);
-    border: 1px solid rgba(255,255,255,.9);
-    border-radius: 12px;
-    padding: 20px;
-    box-shadow: 0 5px 20px rgba(31,54,91,.06);
-}
-
-.panel h2,
-.panel h3 {
-    margin-bottom: 15px;
-}
-
-.panel p {
-    color: #75819a;
-}
-
-.placeholder {
-    margin-top: 18px;
-    min-height: 130px;
-    background: rgba(239,243,250,.8);
-    border: 1px dashed #c5d0e0;
-    border-radius: 9px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    color: #71809b;
-}
-
 /* Adaptation mobile */
-@media screen and (max-width: 1000px) {
-    .stats {
-        grid-template-columns: repeat(2, 1fr);
-    }
-
-    .bottom-panels {
-        grid-template-columns: 1fr 1fr;
-    }
-}
-
 @media screen and (max-width: 650px) {
     .sidebar {
         width: 65px;
@@ -363,32 +230,6 @@ button {
     .main {
         margin-left: 65px;
         width: calc(100% - 65px);
-    }
-
-    .content {
-        padding: 12px;
-    }
-
-    .heading {
-        align-items: flex-start;
-        gap: 10px;
-    }
-
-    .heading h1 {
-        font-size: 22px;
-    }
-
-    .stats {
-        grid-template-columns: 1fr;
-    }
-
-    .panels,
-    .bottom-panels {
-        grid-template-columns: 1fr;
-    }
-
-    .stat h2 {
-        font-size: 21px;
     }
 }
 

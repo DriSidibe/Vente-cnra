@@ -1,15 +1,23 @@
 <script setup lang="ts">
+import { computed } from 'vue';
 
 const props = defineProps<{
-    chiffreAffaires: string | number;
+    valeur: number;
+    unite?: string;
     message: string;
     color?: string;
 }>();
+
+// Espaces simples comme dans la maquette : 1 250 000 FCFA
+const valeurAffichee = computed(() => {
+    const nombre = props.valeur.toLocaleString('fr-FR').replace(/\s/g, ' ');
+    return props.unite ? `${nombre} ${props.unite}` : nombre;
+});
 </script>
 
 <template>
     <div class="stat" :class="props.color">
-        <h2>{{ props.chiffreAffaires.toLocaleString() }} FCFA</h2>
+        <h2>{{ valeurAffichee }}</h2>
         <p>{{ props.message }}</p>
     </div>
 </template>
@@ -51,5 +59,11 @@ const props = defineProps<{
 
 .purple {
     background: linear-gradient(135deg, #a44bd1, #8236b9);
+}
+
+@media screen and (max-width: 650px) {
+    .stat h2 {
+        font-size: 21px;
+    }
 }
 </style>

@@ -1,85 +1,83 @@
 <script setup lang="ts">
+import { computed, onBeforeUnmount, ref } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
+import { connecter, inscrire } from '@/utils/scripts/auth';
 
-import { onMounted, ref } from 'vue';
-import { apiGet } from '../utils/scripts/api';
+const route = useRoute();
+const router = useRouter();
 
-interface Notif {
-    icon: string;
-    titre: string;
-    message: string;
-}
+const showLoginForm = computed(() => route.name !== 'inscription');
+const enCours = ref(false);
+const erreur = ref("");
+let minuteur: ReturnType<typeof setTimeout> | undefined;
 
+const credentials = ref({ username: "", password: "" });
+const compte = ref({ last_name: "", first_name: "", username: "", password: "", confirmation: "" });
+let isConnecting = ref(false);
 
-let notif = ref<Notif>({
-    icon: "",
-    titre: "Connexion réussie",
-    message : "Vous êtes maintenant connecté à votre compte.",
-});
-let showLoginForm = ref(true);
-let showNotif= ref(false);
-let testApi = ref({});
-
-onMounted(async () => {
-    testApi.value = await apiGet("/users/");
-    console.log(testApi.value);
-});
-
-function showLogin() {
-    showLoginForm.value = true;
-}
-
-function showRegister() {
-    showLoginForm.value = false;
-    showNotification("signup", "Inscription réussie", "Votre compte a été créé avec succès.");
-    showNotif.value = true;
+function allerVers(name: 'connexion' | 'inscription') {
+    closeNotification();
+    router.push({ name, query: route.query });
 }
 
 function closeNotification() {
-    const notification = document.getElementById('notification');
-    if (notification) {
-        notification.classList.remove('show');
+    clearTimeout(minuteur);
+    erreur.value = "";
+}
+
+function showError(message: string) {
+    closeNotification();
+    erreur.value = message;
+    minuteur = setTimeout(closeNotification, 6000);
+}
+
+onBeforeUnmount(() => clearTimeout(minuteur));
+
+async function envoyer(action: () => Promise<void>) {
+    if (enCours.value) return;
+    closeNotification();
+    enCours.value = true;
+    try {
+        await action();
+        // Uniquement un chemin interne à l'application
+        const redirect = route.query.redirect;
+        const interne = typeof redirect === 'string' && /^\/(?!\/)/.test(redirect);
+        await router.replace(interne ? redirect : { name: 'tableau-de-bord' });
+    } catch (e) {
+        showError(e instanceof Error ? e.message : "Une erreur est survenue.");
+    } finally {
+        enCours.value = false;
     }
 }
 
-function showNotification(type:string, title:string, message:string) {
-        if(type="login") {
-            notif.value.icon = "✔️";
-            notif.value.titre = title;
-            notif.value.message = message;
-            showNotif.value = true;
-        }
-        if(type="signup") {
-            notif.value.icon = "📝";
-            notif.value.titre = title;
-            notif.value.message = message;
-            showNotif.value = true;
-        }
-}
-
 function login() {
-    showNotification("login", "Connexion réussie", "Vous êtes maintenant connecté à votre compte.");
-    showNotif.value = true;
+    isConnecting.value = true;
+    envoyer(() => connecter(credentials.value));
+    isConnecting.value= false;
 }
 
 function signup() {
-    showNotification("signup", "Inscription réussie", "Votre compte a été créé avec succès.");
-    showNotif.value = true;
+    const { confirmation, ...donnees } = compte.value;
+    if (donnees.password !== confirmation) {
+        showError("Les mots de passe ne correspondent pas.");
+        return;
+    }
+    envoyer(() => inscrire(donnees));
 }
 </script>
 
 <template>
+  <div class="page-connexion">
     <!-- Zone des notifications -->
-    <div v-if="showNotif" class="" style="position: fixed; top: 20px; right: 20px; z-index: 9999;" id="notification">
-        <div class="" id="">{{ notif.icon }}</div>
+    <div v-if="erreur" class="notification error show" role="alert">
+        <div class="notification-icon">⚠️</div>
 
-        <div class="">
-            <strong id="">{{ notif.titre }}</strong>
-            <p id="">
-                {{ notif.message }}
-            </p>
+        <div class="notification-content">
+            <strong>Erreur</strong>
+            <p>{{ erreur }}</p>
         </div>
 
-        <button class="close-notification"
+        <button type="button" class="close-notification" aria-label="Fermer"
             @click="closeNotification()">×</button>
 
         <div class="notification-progress"></div>
@@ -98,18 +96,18 @@ function signup() {
             <!-- Boutons de navigation -->
             <div class="tabs" >
                 <button class="tab active" id="loginTab"
-                    @click="showLogin()" :style="{ backgroundColor: showLoginForm ? '#0875ff' : 'white', color: showLoginForm ? 'white' : '#526078' }">
+                    type="button" @click="allerVers('connexion')" :style="{ backgroundColor: showLoginForm ? '#0875ff' : 'white', color: showLoginForm ? 'white' : '#526078' }">
                     Connexion
                 </button>
 
                 <button class="tab" id="registerTab"
-                    @click="showRegister()" :style="{ backgroundColor: !showLoginForm ? '#0875ff' : 'white', color: !showLoginForm ? 'white' : '#526078' }">
+                    type="button" @click="allerVers('inscription')" :style="{ backgroundColor: !showLoginForm ? '#0875ff' : 'white', color: !showLoginForm ? 'white' : '#526078' }">
                     Créer un compte
                 </button>
             </div>
 
             <!-- FORMULAIRE CONNEXION -->
-            <form v-if="showLoginForm" class="form">
+            <form v-if="showLoginForm" class="form" @submit.prevent="login">
 
                 <h2>Bienvenue !</h2>
                 <p class="subtitle">Connectez-vous à votre espace</p>
@@ -119,6 +117,7 @@ function signup() {
                     <input type="text"
                         name="username"
                         placeholder="Votre nom utilisateur"
+                        v-model="credentials.username"
                         required>
                 </div>
 
@@ -127,17 +126,21 @@ function signup() {
                     <input type="password"
                         name="password"
                         placeholder="Votre mot de passe"
+                        v-model="credentials.password"
                         required>
                 </div>
 
-                <button type="button" class="submit-btn" @click="login">
+                <button v-if="!enCours" type="submit" class="submit-btn">
                     Se connecter
+                </button>
+                <button v-else type="submit" class="submit-btn" disabled>
+                    Connexion en cours...
                 </button>
 
             </form>
 
             <!-- FORMULAIRE INSCRIPTION -->
-            <form v-else class="form">
+            <form v-else class="form" @submit.prevent="signup">
 
                 <h2>Créer un compte</h2>
                 <p class="subtitle">Remplissez les informations ci-dessous</p>
@@ -147,6 +150,7 @@ function signup() {
                     <input type="text"
                         name="nom"
                         placeholder="Votre nom"
+                        v-model="compte.last_name"
                         required>
                 </div>
 
@@ -155,6 +159,7 @@ function signup() {
                     <input type="text"
                         name="prenom"
                         placeholder="Votre prénom"
+                        v-model="compte.first_name"
                         required>
                 </div>
 
@@ -163,6 +168,7 @@ function signup() {
                     <input type="text"
                         name="username"
                         placeholder="Choisissez un nom utilisateur"
+                        v-model="compte.username"
                         required>
                 </div>
 
@@ -172,6 +178,7 @@ function signup() {
                         id="password"
                         name="password"
                         placeholder="Créer un mot de passe"
+                        v-model="compte.password"
                         minlength="8"
                         required>
                 </div>
@@ -182,11 +189,12 @@ function signup() {
                         id="confirmPassword"
                         name="confirm_password"
                         placeholder="Confirmer votre mot de passe"
+                        v-model="compte.confirmation"
                         minlength="8"
                         required>
                 </div>
 
-                <button type="button" class="submit-btn" @click="signup()">
+                <button type="submit" class="submit-btn" :disabled="enCours">
                     Créer mon compte
                 </button>
 
@@ -199,6 +207,7 @@ function signup() {
         </div>
 
     </div>
+  </div>
 </template>
 
 <style scoped>
@@ -210,7 +219,7 @@ function signup() {
     font-family: 'Roboto', sans-serif;
 }
 
-body {
+.page-connexion {
     min-height: 100vh;
     background: linear-gradient(135deg, #2d4b84, #283b54);
     display: flex;
@@ -453,7 +462,7 @@ body {
 }
 
 .notification.show .notification-progress {
-    animation: progress 4s linear forwards;
+    animation: progress 6s linear forwards;
 }
 
 @keyframes progress {

@@ -11,9 +11,10 @@ export default defineConfig({
     vueDevTools(),
   ],
   server: {
+    // Le "/" final évite de capturer la page "/ventes" du frontend
     // Redirige les appels "/vente/..." vers le serveur Django
     proxy: {
-      '/vente': 'http://localhost:8000/',
+      '/vente/': 'http://127.0.0.1:8000',
     },
   },
   resolve: {
