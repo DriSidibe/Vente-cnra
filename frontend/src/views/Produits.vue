@@ -1073,7 +1073,7 @@ onBeforeUnmount(() => {
   position: fixed;
   inset: 0;
   z-index: 1000;
-  background: rgba(15, 23, 42, 0.58);
+  background: rgba(119, 132, 155, 0.58);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -1391,7 +1391,7 @@ onBeforeUnmount(() => {
 
   .btn-delete {
     background: #ffeded;
-    color: #d84d4d;
+    color: #b60000;
   }
 
   .product-modal {

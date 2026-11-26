@@ -150,3 +150,9 @@ CORS_ALLOW_HEADERS = (
     *default_headers,
     "x-api-key",
 )
+
+
+
+
+MEDIA_URL = "/media/"
+MEDIA_ROOT = BASE_DIR / "media"
