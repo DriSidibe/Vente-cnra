@@ -6,13 +6,15 @@ from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 
 from main.helpers import generateNewApiKey, isApiKeyExpired
-from main.models import UserProfile
+from main.models import Produit, UserProfile
 from .serializers.users_serializer import (
     ConnexionSerializer,
     InscriptionSerializer,
     UserProfileSerializer,
     UserSerializer,
 )
+from .serializers.produit_serialiser import ProduitSerializer
+
 
 
 def ouvrir_session(user):
@@ -68,3 +70,8 @@ def moi(request):
 @api_view(['GET'])
 def users(request):
     return Response(UserSerializer(User.objects.order_by('id'), many=True).data)
+
+
+@api_view(['GET'])
+def produits(request):
+    return Response(ProduitSerializer(Produit.objects.order_by('id'), many=True).data)
