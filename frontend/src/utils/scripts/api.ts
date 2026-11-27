@@ -122,12 +122,12 @@ export function apiPostForm<T>(chemin: string, donnees: FormData) {
     });
 }
 
-export function apiPatch<T>(
+export function apiPut<T>(
     chemin: string,
     donnees: object | FormData
 ) {
     return requete<T>(chemin, {
-        method: "PATCH",
+        method: "PUT",
         body: donnees instanceof FormData
             ? donnees
             : JSON.stringify(donnees),

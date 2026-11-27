@@ -24,10 +24,11 @@ const router = createRouter({
       meta: { requiertAuth: true },
       children: [
         { path: '', name: 'tableau-de-bord', component: () => import('@/views/TableauDeBord.vue'), meta: { titre: 'Tableau de bord' } },
-        { path: 'ventes', name: 'ventes', component: enConstruction, meta: { titre: 'Ventes' } },
+        // @ts-ignore Vue component declaration is missing for this module.
+        { path: 'ventes', name: 'ventes', component: () => import('@/views/Ventes.vue'), meta: { titre: 'Ventes' } },
         { path: 'produits', name: 'produits', component: () => import('@/views/Produits.vue'), meta: { titre: 'Produits' } },
         { path: 'categories', name: 'categories', component: enConstruction, meta: { titre: 'Catégories' } },
-        { path: 'clients', name: 'clients', component: enConstruction, meta: { titre: 'Clients' } },
+        { path: 'clients', name: 'clients', component: () => import('@/views/Clients.vue'), meta: { titre: 'Clients' } },
         { path: 'stock', name: 'stock', component: enConstruction, meta: { titre: 'Stock' } },
         { path: 'rapports', name: 'rapports', component: enConstruction, meta: { titre: 'Rapports' } },
         { path: 'utilisateurs', name: 'utilisateurs', component: enConstruction, meta: { titre: 'Utilisateurs' } },

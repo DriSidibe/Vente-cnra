@@ -283,15 +283,7 @@
               />
             </div>
 
-            <div class="form-group">
-              <label>Référence *</label>
-              <input
-                v-model="form.reference"
-                type="text"
-                required
-                placeholder="Ex : PROD001"
-              />
-            </div>
+
 
             <div class="form-group">
               <label>Catégorie *</label>
@@ -409,7 +401,7 @@ import { ref, computed, onMounted, onBeforeUnmount } from "vue";
 import {
   apiGet,
   apiPostForm,
-  apiPatch,
+  apiPut,
   apiDelete,
 } from "@/utils/scripts/api";
 
@@ -646,20 +638,20 @@ async function enregistrerProduit() {
 
   try {
     if (modeEdition.value && produitId.value !== null) {
-      await apiPatch(
-        `/produits/${produitId.value}/`,
+      await apiPut(
+        `/modifier_produit/${produitId.value}/`,
         donnees
       );
 
       afficherSucces("Produit modifié avec succès.");
     } else {
-      await apiPostForm(
-        "/produits/",
-        donnees
-      );
+  await apiPostForm(
+    "/ajouter_produit/",
+    donnees
+  );
 
-      afficherSucces("Produit ajouté avec succès.");
-    }
+  afficherSucces("Produit ajouté avec succès.");
+}
 
     fermerModal();
     await chargerProduits();
@@ -683,7 +675,7 @@ async function supprimerProduit(produit: Produit) {
   erreur.value = "";
 
   try {
-    await apiDelete(`/produits/${produit.id}/`);
+    await apiDelete(`/supprimer_produit/${produit.id}/`);
 
     produits.value = produits.value.filter(
       p => p.id !== produit.id
