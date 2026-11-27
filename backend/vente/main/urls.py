@@ -22,4 +22,7 @@ urlpatterns = [
     path('ajouter_client/', views.ajouter_client, name='ajouter_client'),
     path('modifier_client/<int:client_id>/', views.modifier_client,name='modifier_client'),
     path('supprimer_client/<int:client_id>/',views.supprimer_client,name='supprimer_client'),
+    path('stock/', views.stock, name='stock'),
+    path('historique-stock/', views.historique_stock, name='historique_stock'),
+    path('ajouter-mouvement-stock/', views.ajouter_mouvement_stock, name='ajouter_mouvement_stock'),
 ]

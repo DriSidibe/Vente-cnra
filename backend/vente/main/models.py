@@ -143,6 +143,14 @@ class Vente(models.Model):
         max_length=150
     )
 
+    client_utilisateur = models.ForeignKey(
+    User,
+    on_delete=models.SET_NULL,
+    null=True,
+    blank=True,
+    related_name='achats'
+)
+
     date_vente = models.DateField(
         auto_now_add=True
     )
@@ -181,6 +189,8 @@ class Vente(models.Model):
 
     def __str__(self):
         return f"Vente #{self.id} - {self.client}"
+
+
 
 
 # ==================================================
@@ -227,3 +237,46 @@ class LigneVente(models.Model):
             f"{self.produit.nom} - "
             f"{self.quantite} unité(s)"
         )
+
+
+
+
+class MouvementStock(models.Model):
+    TYPE_CHOICES = [
+        ('ENTREE', 'Entrée'),
+        ('SORTIE', 'Sortie'),
+    ]
+
+    produit = models.ForeignKey(
+        Produit,
+        on_delete=models.PROTECT,
+        related_name='mouvements_stock'
+    )
+
+    type_mouvement = models.CharField(
+        max_length=10,
+        choices=TYPE_CHOICES
+    )
+
+    quantite = models.PositiveIntegerField()
+
+    motif = models.CharField(
+        max_length=255,
+        blank=True,
+        null=True
+    )
+
+    utilisateur = models.ForeignKey(
+        User,
+        on_delete=models.PROTECT,
+        related_name='mouvements_stock'
+    )
+
+    date_mouvement = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        db_table = 'mouvement_stock'
+        ordering = ['-date_mouvement']
+
+    def __str__(self):
+        return f"{self.type_mouvement} - {self.produit.nom} ({self.quantite})"

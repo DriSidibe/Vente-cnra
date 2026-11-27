@@ -326,7 +326,7 @@ onMounted(() => {
     <!-- EN-TÊTE -->
     <header class="page-header">
       <div>
-        <span class="surtitle">GESTION COMMERCIALE</span>
+       
         <h1>Gestion des clients</h1>
         <p>Consultez et suivez les comptes de vos clients.</p>
       </div>

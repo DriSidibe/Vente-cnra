@@ -29,7 +29,7 @@ const router = createRouter({
         { path: 'produits', name: 'produits', component: () => import('@/views/Produits.vue'), meta: { titre: 'Produits' } },
         { path: 'categories', name: 'categories', component: enConstruction, meta: { titre: 'Catégories' } },
         { path: 'clients', name: 'clients', component: () => import('@/views/Clients.vue'), meta: { titre: 'Clients' } },
-        { path: 'stock', name: 'stock', component: enConstruction, meta: { titre: 'Stock' } },
+        { path: 'stock', name: 'stock', component: () => import('@/views/Stock.vue'), meta: { titre: 'Stock' } },
         { path: 'rapports', name: 'rapports', component: enConstruction, meta: { titre: 'Rapports' } },
         { path: 'utilisateurs', name: 'utilisateurs', component: enConstruction, meta: { titre: 'Utilisateurs' } },
         { path: 'parametres', name: 'parametres', component: enConstruction, meta: { titre: 'Paramètres' } },
